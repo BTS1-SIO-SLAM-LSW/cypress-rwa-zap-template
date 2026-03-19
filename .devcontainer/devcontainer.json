@@ -1,0 +1,38 @@
+{
+  "name": "cypress-rwa-zap-template",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "remoteUser": "node",
+  "features": {},
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker",
+        "ms-vscode.vscode-json"
+      ]
+    }
+  },
+  "forwardPorts": [3000, 3001, 8080],
+  "portsAttributes": {
+    "3000": {
+      "label": "Application web cible",
+      "onAutoForward": "notify"
+    },
+    "3001": {
+      "label": "Port secondaire éventuel",
+      "onAutoForward": "silent"
+    },
+    "8080": {
+      "label": "OWASP ZAP / service auxiliaire",
+      "onAutoForward": "silent"
+    }
+  },
+  "postCreateCommand": "bash scripts/post-create.sh"
+}
