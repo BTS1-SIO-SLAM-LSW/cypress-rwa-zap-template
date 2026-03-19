@@ -1,344 +1,251 @@
-# Template repository — Cypress Real World App + Node.js + Yarn dans Docker/devcontainer
+# TP – Test de Cypress Real World App avec OWASP ZAP (via GitHub Codespaces)
 
-Ce template est pensé pour des **élèves** qui doivent lancer la **Cypress Real World App (RWA)** dans **GitHub Codespaces** ou dans un **Dev Container**, sans droits administrateur sur le poste local.
+## Objectif pédagogique (BTS SIO SLAM)
 
-Il fournit un conteneur prêt à l'emploi avec :
+Ce TP a pour objectif de :
 
-- **Node.js** préinstallé ;
-- **Yarn Classic** via Corepack ;
-- les ports utiles déjà redirigés ;
-- des scripts pour cloner, installer et lancer la RWA.
-
-L'objectif est de pouvoir exécuter la RWA sur :
-
-- `http://localhost:3000` pour le **frontend** ;
-- `http://localhost:3001` pour l'**API backend**.
-
-Ces ports et commandes sont conformes au README du dépôt de la Cypress Real World App. Le projet upstream précise notamment que :
-
-- la RWA est une application **Express/React** avec une base JSON locale ;
-- `yarn dev` lance l'application ;
-- le frontend utilise le port **3000** et le backend le port **3001** par défaut ;
-- **Yarn Classic** est requis, pas Yarn Modern ;
-- le mot de passe par défaut des utilisateurs d'exemple est **`s3cret`** ;
-- la liste des comptes de démonstration peut être affichée avec `yarn list:dev:users`. fileciteturn1file0
+- Déployer une application web moderne (Cypress Real World App)
+- Comprendre l'environnement Node.js
+- Utiliser Yarn
+- Tester une application avec OWASP ZAP
+- Identifier des vulnérabilités OWASP Top 10
+- Réaliser un audit sécurité applicatif
 
 ---
 
-## 1. Structure du template
+# Important : pas de localhost dans Codespaces
 
-```text
-.devcontainer/
-  Dockerfile
-  devcontainer.json
-scripts/
-  clone-rwa.sh
-  post-create.sh
-  run-rwa.sh
-README.md
-.gitignore
-```
+Dans GitHub Codespaces, l’application **ne sera PAS accessible via localhost:3000**.
 
----
+Elle sera accessible via une URL sécurisée de type :
 
-## 2. Ouvrir le template dans GitHub Codespaces
+https://<nom-du-codespace>-3000.app.github.dev
 
-1. Créer un dépôt GitHub à partir de ce template.
-2. Ouvrir ce dépôt dans **Codespaces**.
-3. Attendre la construction complète du conteneur.
-4. Ouvrir le terminal intégré.
-5. Vérifier l'environnement :
+Exemple :
 
-```bash
-node --version
-npm --version
-yarn --version
-```
+https://glowing-space-xyz-3000.app.github.dev
 
-Le conteneur active **Corepack** et prépare **Yarn Classic** automatiquement.
+GitHub crée automatiquement cette URL lorsque le port est exposé.
 
 ---
 
-## 3. Cloner l'application Cypress Real World App dans le workspace
+# Étape 1 – Ouvrir le projet dans Codespaces
 
-Dans le terminal du Codespace, exécuter :
+1 Aller sur le repository GitHub  
+2 Cliquer sur :
 
-```bash
-bash scripts/clone-rwa.sh
-```
+Code → Codespaces → Create Codespace
 
-Ce script :
-
-- clone le dépôt officiel `cypress-io/cypress-realworld-app` dans le dossier `app/` ;
-- active Corepack ;
-- force l'usage de **Yarn Classic** ;
-- installe les dépendances avec `yarn`.
-
-### Alternative manuelle
-
-Si vous préférez tout faire à la main :
-
-```bash
-git clone https://github.com/cypress-io/cypress-realworld-app app
-cd app
-corepack enable
-yarn --version
-yarn
-```
+Attendre la construction du container.
 
 ---
 
-## 4. Vérifier les prérequis spécifiques à la RWA
+# Étape 2 – Installer l’application Cypress Real World App
 
-D'après le README du dépôt officiel, la RWA nécessite :
+Dans le terminal Codespaces :
 
-- **Node.js** ;
-- **Yarn Classic** ;
-- de préférence les ports **3000** et **3001** libres. fileciteturn1file0
+```bash
+chmod +x scripts/clone-rwa.sh
+./scripts/clone-rwa.sh
+```
 
-### Point important sur Yarn
+Ce script va :
 
-Le dépôt officiel précise que :
-
-- **Yarn Classic** est compatible ;
-- **Yarn Modern (v2+) n'est pas compatible**. fileciteturn1file0
-
-Dans ce template, cet aspect est déjà pris en compte.
+- cloner le projet officiel
+- installer les dépendances
+- préparer la base SQLite
 
 ---
 
-## 5. Lancer l'application
+# Étape 3 – Lancer l’application
 
-Depuis la racine du template, exécuter :
+Dans le terminal :
 
 ```bash
-bash scripts/run-rwa.sh
+chmod +x scripts/run-rwa.sh
+./scripts/run-rwa.sh
 ```
 
-Ce script se place dans `app/` et lance :
+ou manuellement :
 
 ```bash
+cd cypress-realworld-app
 yarn dev
 ```
 
-### Lancement manuel
+---
 
-```bash
-cd app
-yarn dev
-```
+# Étape 4 – Ouvrir l’application
 
-Le README officiel indique que :
+1 Aller dans l’onglet :
 
-- le **frontend** écoute sur `3000` ;
-- le **backend** écoute sur `3001` ;
-- les deux sont démarrés par `yarn dev`. fileciteturn1file0
+PORTS
 
-Une fois démarrée, l'application est accessible sur :
+2 Repérer le port :
 
-```text
-http://localhost:3000
-```
+3000
+
+3 Cliquer sur :
+
+Open in Browser
+
+OU copier l’URL fournie par Codespaces.
 
 ---
 
-## 6. Comptes de démonstration
+# Étape 5 – Comptes de test
 
-Le dépôt officiel précise que la base locale contient déjà des données d'exemple et que le mot de passe par défaut de tous les utilisateurs est :
+Login :
 
-```text
+username:
+
+johndoe
+
+password:
+
 s3cret
-```
 
-Pour afficher la liste des utilisateurs de développement :
+Autre compte :
 
-```bash
-cd app
-yarn list:dev:users
-```
-
-Ces informations viennent directement du README du dépôt officiel. fileciteturn1file0
+janedoe / s3cret
 
 ---
 
-## 7. Démarrer Cypress
+# Étape 6 – Lancer Cypress
 
-Quand l'application tourne, ouvrir un second terminal et exécuter :
+Dans un second terminal :
 
 ```bash
-cd app
+cd cypress-realworld-app
 yarn cypress:open
 ```
 
-Le README officiel donne cette commande pour lancer Cypress. fileciteturn1file0
+---
+
+# Étape 7 – Tester avec OWASP ZAP
+
+## Configuration du proxy
+
+Configurer le navigateur :
+
+Proxy :
+
+localhost
+
+Port :
+
+8080
+
+Puis dans ZAP :
+
+Quick Start → Automated Scan
+
+Entrer l’URL Codespaces :
+
+https://<codespace>-3000.app.github.dev
 
 ---
 
-## 8. Utiliser OWASP ZAP dans un cadre légal
+# Étape 8 – Travail demandé
 
-Vous pouvez utiliser **OWASP ZAP** sur cette application **uniquement parce qu'elle est exécutée dans votre propre environnement d'entraînement**.
+Identifier :
 
-Cadre légal recommandé :
+- XSS
+- Cookies non sécurisés
+- Headers manquants
+- JWT faibles
+- API exposées
+- Mauvaises configurations CORS
 
-- application exécutée dans votre Codespace ou votre Dev Container ;
-- application de démonstration clonée par vous ;
-- pas de scan sur un site tiers sans autorisation explicite.
+Compléter le tableau :
 
-### Cible à analyser
-
-Quand la RWA tourne, la cible à donner à ZAP est :
-
-```text
-http://localhost:3000
-```
-
-### Avec le proxy ZAP
-
-Si vous utilisez ZAP en mode proxy, configurez le navigateur de test pour passer par :
-
-```text
-Host: localhost
-Port: 8080
-```
-
-Le port `8080` est déjà prévu dans le template comme port auxiliaire.
+| Vulnérabilité | Gravité | Description | Correction |
+|---------------|---------|-------------|------------|
 
 ---
 
-## 9. Changer les ports si nécessaire
+# Compétences BTS SIO mobilisées
 
-Le README officiel indique que si vous changez les ports, il faut modifier :
+Bloc 3 cybersécurité :
 
-- `PORT` ;
-- `VITE_BACKEND_PORT` ;
-- éventuellement `cypress.config.ts` pour garder une configuration cohérente. fileciteturn1file0
-
-### Exemple
-
-Si vous choisissez :
-
-```env
-PORT=13000
-VITE_BACKEND_PORT=13001
-```
-
-alors il faudra adapter localement dans `cypress.config.ts` :
-
-- `e2e.baseUrl`
-- `env.apiUrl`
-- `env.url`
-
-Le README du projet officiel recommande aussi de **ne pas committer ces changements locaux de ports**. fileciteturn1file0
+✔ Sécuriser une application  
+✔ Identifier vulnérabilités  
+✔ Tester une application  
+✔ Protéger les données  
+✔ OWASP Top 10  
 
 ---
 
-## 10. Base locale et réinitialisation des données
+# Commandes utiles
 
-Le README officiel précise que :
-
-- la base locale est un fichier JSON situé dans `data/database.json` ;
-- la base est réinitialisée à partir d'un seed au démarrage avec `yarn dev` ;
-- les tests E2E réinitialisent également les données. fileciteturn1file0
-
-Conséquence pédagogique importante :
-
-- vous pouvez réaliser des tests, modifier des données, puis relancer `yarn dev` pour retrouver un état de départ cohérent.
-
----
-
-## 11. Commandes utiles à retenir pour les élèves
-
-### Installer la RWA
+Installation :
 
 ```bash
-bash scripts/clone-rwa.sh
+yarn install
 ```
 
-### Lancer la RWA
+Lancement :
 
 ```bash
-bash scripts/run-rwa.sh
+yarn dev
 ```
 
-### Afficher les utilisateurs d'exemple
+Tests :
 
 ```bash
-cd app
-yarn list:dev:users
-```
-
-### Lancer Cypress
-
-```bash
-cd app
 yarn cypress:open
 ```
 
-### Générer une nouvelle base JSON
+---
+
+# Problèmes fréquents
+
+Application inaccessible :
+
+→ vérifier port 3000 ouvert
+
+Erreur yarn :
+
+→ relancer :
 
 ```bash
-cd app
-yarn db:seed
+yarn install
 ```
 
-Ces commandes correspondent aux usages décrits dans le README officiel du projet. fileciteturn1file0
+Port non visible :
+
+→ vérifier onglet PORTS
 
 ---
 
-## 12. Dépannage rapide
+# Bonnes pratiques sécurité
 
-### `yarn` ne marche pas
+Ne jamais tester :
 
-Exécuter :
+- Google
+- Amazon
+- sites entreprises
+- administrations
 
-```bash
-corepack enable
-corepack prepare yarn@1.22.22 --activate
-yarn --version
-```
+Sans autorisation.
 
-### Le dossier `app/` n'existe pas
+Seulement :
 
-Exécuter :
-
-```bash
-bash scripts/clone-rwa.sh
-```
-
-### Le port 3000 ou 3001 est déjà utilisé
-
-Modifier `.env` dans `app/`, puis adapter `cypress.config.ts` comme indiqué dans le README officiel. fileciteturn1file0
-
-### ZAP ne voit rien passer
-
-Vérifier que :
-
-- la RWA est bien démarrée ;
-- l'URL testée est `http://localhost:3000` ;
-- le navigateur passe bien par le proxy ZAP si vous utilisez le mode intercept/proxy.
+✔ applications locales  
+✔ environnements pédagogiques  
+✔ applications vulnérables volontaires  
 
 ---
 
-## 13. Conseils pour le travail demandé aux élèves
+# Livrable attendu
 
-Séquence recommandée :
+Un rapport PDF contenant :
 
-1. ouvrir le template dans Codespaces ;
-2. exécuter `bash scripts/clone-rwa.sh` ;
-3. lancer l'application avec `bash scripts/run-rwa.sh` ;
-4. vérifier l'accès à `http://localhost:3000` ;
-5. identifier un compte de démonstration avec `yarn list:dev:users` ;
-6. lancer Cypress ou ZAP selon l'activité demandée ;
-7. consigner les observations dans un rapport.
+- vulnérabilités trouvées
+- captures écran ZAP
+- analyse risques
+- corrections proposées
 
 ---
 
-## 14. Rappel important
-
-Ce template sert à **héberger légalement une application de test** dans un environnement contrôlé.
-
-Il ne doit pas être utilisé pour scanner :
-
-- des sites publics ;
-- des applications d'entreprise ;
-- des cibles sans autorisation.
+# Fin du TP
